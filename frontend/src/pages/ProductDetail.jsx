@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
-import { getProduct, addToCart, getReviews, addReview } from "../api/api"
+import { getProduct, addToCart, getReviews, addReview, getImageUrl } from "../api/api"
 import { useAuth } from "../context/AuthContext"
 
 export default function ProductDetail() {
@@ -78,15 +78,16 @@ export default function ProductDetail() {
     return <div className="text-center py-24 text-gray-400 text-sm">Product not found</div>
   }
 
+  const imageUrl = getImageUrl(product.image)
+
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      {/* product info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-14">
         {/* image */}
         <div className="bg-gray-100 rounded-2xl aspect-square overflow-hidden">
-          {product.image ? (
+          {imageUrl ? (
             <img
-              src={product.image}
+              src={imageUrl}
               alt={product.name}
               className="w-full h-full object-cover"
             />
@@ -109,7 +110,6 @@ export default function ProductDetail() {
             {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
           </p>
 
-          {/* quantity + add to cart */}
           <div className="flex items-center gap-3 mb-3">
             <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden">
               <button

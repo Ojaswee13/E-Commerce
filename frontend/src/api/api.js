@@ -1,5 +1,6 @@
 import axios from "axios"
 
+export const BASE_URL = "http://localhost:5000"
 const BASE = "http://localhost:5000/api"
 
 const getToken = () => localStorage.getItem("token")
@@ -8,6 +9,12 @@ const authHeaders = () => ({
   Authorization: `Bearer ${getToken()}`,
 })
 
+export const getImageUrl = (image) => {
+  if (!image) return null
+  if (image.startsWith("http")) return image
+  return `${BASE_URL}${image}`
+}
+
 // auth
 export const registerUser = (data) => axios.post(`${BASE}/auth/register`, data)
 export const loginUser = (data) => axios.post(`${BASE}/auth/login`, data)
@@ -15,7 +22,7 @@ export const loginUser = (data) => axios.post(`${BASE}/auth/login`, data)
 // products
 export const getProducts = (params) => axios.get(`${BASE}/products`, { params })
 export const getProduct = (id) => axios.get(`${BASE}/products/${id}`)
-export const createProduct = (data) => axios.post(`${BASE}/products`, data, { headers: authHeaders() })
+export const createProduct = (formData) => axios.post(`${BASE}/products`, formData, { headers: authHeaders() })
 export const updateProduct = (id, data) => axios.put(`${BASE}/products/${id}`, data, { headers: authHeaders() })
 export const deleteProduct = (id) => axios.delete(`${BASE}/products/${id}`, { headers: authHeaders() })
 
@@ -28,7 +35,7 @@ export const removeFromCart = (productId) => axios.delete(`${BASE}/cart/${produc
 export const placeOrder = () => axios.post(`${BASE}/orders`, {}, { headers: authHeaders() })
 export const getMyOrders = () => axios.get(`${BASE}/orders/myorders`, { headers: authHeaders() })
 
-// reviews
+//reviews
 export const getReviews = (productId) => axios.get(`${BASE}/reviews/${productId}`)
 export const addReview = (productId, data) => axios.post(`${BASE}/reviews/${productId}`, data, { headers: authHeaders() })
 

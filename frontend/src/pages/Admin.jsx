@@ -6,6 +6,7 @@ import {
   getProducts,
   createProduct,
   deleteProduct,
+  getImageUrl,
 } from "../api/api"
 
 export default function Admin() {
@@ -22,8 +23,9 @@ export default function Admin() {
     price: "",
     category: "",
     stock: "",
-    image: "",
   })
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
 
   const showMsg = (text) => {
     setMsg(text)
@@ -54,6 +56,13 @@ export default function Admin() {
     fetchTabData()
   }, [tab])
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+  }
+
   const handleStatusChange = async (id, status) => {
     try {
       await updateOrderStatus(id, status)
@@ -67,12 +76,18 @@ export default function Admin() {
   const handleCreateProduct = async (e) => {
     e.preventDefault()
     try {
-      await createProduct({
-        ...form,
-        price: Number(form.price),
-        stock: Number(form.stock),
-      })
-      setForm({ name: "", description: "", price: "", category: "", stock: "", image: "" })
+      const formData = new FormData()
+      formData.append("name", form.name)
+      formData.append("description", form.description)
+      formData.append("price", form.price)
+      formData.append("category", form.category)
+      formData.append("stock", form.stock)
+      if (imageFile) formData.append("image", imageFile)
+
+      await createProduct(formData)
+      setForm({ name: "", description: "", price: "", category: "", stock: "" })
+      setImageFile(null)
+      setImagePreview(null)
       const res = await getProducts({})
       setProducts(res.data)
       showMsg("Product added!")
@@ -205,7 +220,6 @@ export default function Admin() {
       {/* products */}
       {!loading && tab === "products" && (
         <div>
-          {/* add product form */}
           <h2 className="text-base font-semibold mb-4">Add New Product</h2>
           <form onSubmit={handleCreateProduct} className="bg-gray-50 rounded-xl p-5 mb-8 space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -240,12 +254,23 @@ export default function Admin() {
                 placeholder="Category"
                 className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black bg-white"
               />
-              <input
-                value={form.image}
-                onChange={(e) => setForm({ ...form, image: e.target.value })}
-                placeholder="Image URL (optional)"
-                className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black bg-white"
-              />
+
+              {/* file upload */}
+              <div className="flex items-center gap-3">
+                <label className="flex-1 cursor-pointer border border-dashed border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-400 hover:border-black transition-colors text-center">
+                  {imageFile ? imageFile.name : "Upload image"}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </label>
+                {imagePreview && (
+                  <img src={imagePreview} alt="preview" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                )}
+              </div>
+
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -262,7 +287,6 @@ export default function Admin() {
             </button>
           </form>
 
-          {/* product list */}
           <h2 className="text-base font-semibold mb-4">All Products ({products.length})</h2>
           <div className="space-y-3">
             {products.length === 0 && (
@@ -274,8 +298,8 @@ export default function Admin() {
                 className="flex items-center gap-4 bg-gray-50 rounded-xl px-5 py-4"
               >
                 <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                  {product.image ? (
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                  {getImageUrl(product.image) ? (
+                    <img src={getImageUrl(product.image)} alt={product.name} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">—</div>
                   )}
