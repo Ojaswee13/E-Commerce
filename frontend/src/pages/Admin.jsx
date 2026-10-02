@@ -248,12 +248,21 @@ export default function Admin() {
                 required
                 className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black bg-white"
               />
-              <input
+
+              {/* category dropdown - values match the home page filter */}
+              <select
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-                placeholder="Category"
+                required
                 className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black bg-white"
-              />
+              >
+                <option value="">Select category</option>
+                <option value="men">Men</option>
+                <option value="women">Women</option>
+                <option value="kids">Kids</option>
+                <option value="casual">Casual</option>
+                <option value="formal">Formal</option>
+              </select>
 
               {/* file upload */}
               <div className="flex items-center gap-3">

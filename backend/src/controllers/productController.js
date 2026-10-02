@@ -45,7 +45,7 @@ const getProduct = async (req, res) => {
 const createProduct = async (req, res) => {
   try {
     const image = req.file ? `/uploads/${req.file.filename}` : ""
-    const product = await Product.create({ ...req.body, image })
+    const product = await Product.create({ ...req.body, image }) 
     res.status(201).json(product)
   } catch (err) {
     res.status(400).json({ message: "Please provide valid product details" })
