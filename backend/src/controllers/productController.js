@@ -9,8 +9,9 @@ const getProducts = async (req, res) => {
     query.name = { $regex: search, $options: "i" }
   }
 
+  // ignores capital letters and extra spaces, so "Kids" still matches "kids"
   if (category) {
-    query.category = category
+    query.category = { $regex: `^\\s*${category}\\s*$`, $options: "i" }
   }
 
   if (minPrice || maxPrice) {
@@ -45,7 +46,9 @@ const getProduct = async (req, res) => {
 const createProduct = async (req, res) => {
   try {
     const image = req.file ? `/uploads/${req.file.filename}` : ""
-    const product = await Product.create({ ...req.body, image }) 
+    // save category as clean lowercase text
+    const category = req.body.category ? req.body.category.trim().toLowerCase() : ""
+    const product = await Product.create({ ...req.body, category, image })
     res.status(201).json(product)
   } catch (err) {
     res.status(400).json({ message: "Please provide valid product details" })
@@ -55,6 +58,7 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const updateData = { ...req.body }
+    if (updateData.category) updateData.category = updateData.category.trim().toLowerCase()
     if (req.file) updateData.image = `/uploads/${req.file.filename}`
 
     const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true })
