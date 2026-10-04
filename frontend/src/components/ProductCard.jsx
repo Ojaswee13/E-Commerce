@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { getImageUrl } from "../api/api"
+import SmoothImage from "./SmoothImage"
 
 export default function ProductCard({ product }) {
   const imageUrl = getImageUrl(product.image)
@@ -8,10 +9,10 @@ export default function ProductCard({ product }) {
     <Link to={`/product/${product._id}`} className="group block">
       <div className="bg-gray-100 rounded-2xl overflow-hidden aspect-square mb-3">
         {imageUrl ? (
-          <img
+          <SmoothImage
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="group-hover:scale-105"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">

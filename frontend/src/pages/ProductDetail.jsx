@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 import { getProduct, addToCart, getReviews, addReview, getImageUrl } from "../api/api"
 import { useAuth } from "../context/AuthContext"
+import SmoothImage from "../components/SmoothImage"
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -38,6 +39,7 @@ export default function ProductDetail() {
   const handleAddToCart = async () => {
     if (!user) {
       setCartMsg("Please login to add items to cart")
+      setTimeout(() => setCartMsg(""), 3000)
       return
     }
     try {
@@ -54,6 +56,7 @@ export default function ProductDetail() {
     e.preventDefault()
     if (!user) {
       setReviewMsg("Please login to leave a review")
+      setTimeout(() => setReviewMsg(""), 3000)
       return
     }
     setReviewLoading(true)
@@ -86,11 +89,8 @@ export default function ProductDetail() {
         {/* image */}
         <div className="bg-gray-100 rounded-2xl aspect-square overflow-hidden">
           {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
+            // key makes the fade start again when you open a different product
+            <SmoothImage key={imageUrl} src={imageUrl} alt={product.name} />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
               No image
@@ -191,7 +191,7 @@ export default function ProductDetail() {
           </form>
         ) : (
           <p className="text-sm text-gray-400">
-            <a href="/login" className="text-black underline">Login</a> to leave a review
+            <Link to="/login" className="text-black underline">Login</Link> to leave a review
           </p>
         )}
       </div>
