@@ -46,7 +46,8 @@ const AppRoutes = () => {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      {/* future flags turn on the React Router v7 behavior early, which removes the console warnings */}
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AppRoutes />
       </BrowserRouter>
     </AuthProvider>
