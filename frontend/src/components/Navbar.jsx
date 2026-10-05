@@ -11,7 +11,7 @@ export default function Navbar() {
 
   const isHome = location.pathname === "/"
 
-
+  // turns the bar solid black after the user scrolls down a little
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60)
     handleScroll()
@@ -19,12 +19,12 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-
+  // close the mobile menu whenever the page changes
   useEffect(() => {
     setMenuOpen(false)
   }, [location.pathname])
 
-
+  // close the mobile menu with the Escape key
   useEffect(() => {
     if (!menuOpen) return
     const handleKey = (e) => {
@@ -42,7 +42,7 @@ export default function Navbar() {
     navigate("/login")
   }
 
-
+  // home page: bar floats over the hero photo, other pages: normal black bar
   const barStyle = isHome
     ? `fixed top-0 inset-x-0 z-30 transition-colors duration-300 ${
         scrolled || menuOpen ? "bg-black" : "bg-transparent"
@@ -56,7 +56,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link to="/" className="text-xl font-bold tracking-widest">SHOP.CO</Link>
 
-
+        {/* menu button, only shown on phones */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="md:hidden p-2 -mr-2"
@@ -75,7 +75,7 @@ export default function Navbar() {
           </svg>
         </button>
 
-
+        {/* links: a dropdown panel on phones, a normal row on bigger screens */}
         <div
           className={`${menuOpen ? "flex" : "hidden"} md:flex flex-col items-start md:flex-row md:items-center gap-4 md:gap-6 text-sm absolute md:static top-full inset-x-0 bg-black md:bg-transparent px-6 py-5 md:p-0 border-t border-white/10 md:border-0`}
         >
